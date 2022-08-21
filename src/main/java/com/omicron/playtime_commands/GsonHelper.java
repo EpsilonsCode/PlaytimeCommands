@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package com.omicron.playtime_commands;
 
 //
 // Source code recreated from a .class file by IntelliJ IDEA

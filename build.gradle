@@ -2,13 +2,13 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
-    id "com.github.johnrengelman.shadow" version "4.0.4"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
     id "java"
 }
 
 version = '1.0'
-group = 'com.yourname.modid' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'modid'
+group = 'com.yourname.playtime_commands' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'playtime_commands'
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -70,7 +70,7 @@ minecraft {
             property 'forge.enabledGameTestNamespaces', 'examplemod'
 
             mods {
-                examplemod {
+                playtime_commands {
                     source sourceSets.main
                 }
             }
@@ -89,7 +89,7 @@ minecraft {
             property 'forge.enabledGameTestNamespaces', 'examplemod'
 
             mods {
-                examplemod {
+                playtime_commands {
                     source sourceSets.main
                 }
             }
@@ -106,7 +106,7 @@ minecraft {
             args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                examplemod {
+                playtime_commands {
                     source sourceSets.main
                 }
             }

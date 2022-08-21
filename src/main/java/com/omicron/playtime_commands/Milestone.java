@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package com.omicron.playtime_commands;
 
 public class Milestone {
     public int playtime;

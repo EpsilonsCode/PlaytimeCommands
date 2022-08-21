@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package com.omicron.playtime_commands;
 
 import com.google.gson.*;
 import com.mojang.logging.LogUtils;
@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(ExampleMod.MODID)
-public class ExampleMod
+@Mod(PlaytimeCommands.MODID)
+public class PlaytimeCommands
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -33,11 +33,11 @@ public class ExampleMod
 
     private static HashMap<String, Milestone> milestoneMap = new HashMap<>();
     // Define mod id in a common place for everything to reference
-    public static final String MODID = "examplemod";
+    public static final String MODID = "playtime_commands";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public ExampleMod()
+    public PlaytimeCommands()
     {
 
 
@@ -49,7 +49,7 @@ public class ExampleMod
     @SubscribeEvent
     public void onEntityJoin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        if(event.getEntity().getLevel() instanceof ServerLevel && event.getEntity() instanceof ServerPlayer)
+        if(event.getEntity() instanceof ServerPlayer serverPlayer)
         {
             float playtimeInSeconds = 0;
             //System.out.println(event.getEntity());
@@ -66,7 +66,7 @@ public class ExampleMod
                 Statement stmt = conn.createStatement();
                 //execute query
                 //System.out.println("sql1");
-                ResultSet rs = stmt.executeQuery("SELECT Playtime FROM player_stats WHERE UUID = " + "'" + event.getEntity().getUUID() + "'");
+                ResultSet rs = stmt.executeQuery("SELECT Playtime FROM player_stats WHERE UUID = " + "'" + serverPlayer.getUUID() + "'");
                 //position result to first
                 //rs.first();
 
@@ -82,7 +82,7 @@ public class ExampleMod
             }
 
             
-            event.getEntity().sendSystemMessage(Component.literal("You've been playing for: " + playtimeInSeconds / 3600 + " hours!"));
+            serverPlayer.sendSystemMessage(Component.literal("You've been playing for: " + playtimeInSeconds / 3600 + " hours!"));
             ArrayList<String> milestones = new ArrayList<>();
             JsonObject json = new JsonObject();
             JsonArray jsonArray = new JsonArray();
@@ -92,7 +92,7 @@ public class ExampleMod
                     json = GSON.fromJson(new FileReader(SAVED_PATH), JsonObject.class);
                     for (Map.Entry<String, JsonElement> entry : json.entrySet())
                     {
-                        if(event.getEntity().getUUID().toString().equals(entry.getKey()))
+                        if(serverPlayer.getUUID().toString().equals(entry.getKey()))
                         {
                             if(entry.getValue().isJsonArray())
                             {
@@ -123,7 +123,7 @@ public class ExampleMod
                         try {
                             System.out.println("test2" + entry.getKey());
                             jsonArray.add(entry.getKey());
-                            json.add(event.getEntity().getUUID().toString(), jsonArray);
+                            json.add(serverPlayer.getUUID().toString(), jsonArray);
                             FileWriter writer = new FileWriter(SAVED_PATH);
                             GSON.toJson(json, writer);
                             writer.flush();
@@ -135,7 +135,7 @@ public class ExampleMod
                         {
                             for(String command : entry.getValue().commands)
                             {
-                                command = command.replace("{username}", event.getEntity().getName().getString());
+                                command = command.replace("{username}", serverPlayer.getName().getString());
                                 StringBuffer sb = new StringBuffer(command);
                                 sb.deleteCharAt(sb.length() - 1);
                                 sb.deleteCharAt(0);
