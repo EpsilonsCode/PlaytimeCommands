@@ -2,6 +2,8 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
+    id "com.github.johnrengelman.shadow" version "4.0.4"
+    id "java"
 }
 
 version = '1.0'
@@ -116,6 +118,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    mavenCentral()
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
@@ -131,6 +134,8 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.19.2-43.1.1'
 
+
+    minecraftLibrary "${project.library_maven_name}:${project.library_version}"
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
@@ -181,3 +186,16 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+jar {
+    exclude('net')
+}
+
+shadowJar {
+    dependencies {
+        include(dependency("${project.library_maven_name}:.*"))
+    }
+    exclude('net')
+}
+
+jar.finalizedBy('shadowJar')
