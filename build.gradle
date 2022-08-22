@@ -12,13 +12,15 @@ buildscript {
 plugins {
     id 'eclipse'
     id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id "java"
 }
 apply plugin: 'net.minecraftforge.gradle'
 
 
 version = '1.0'
-group = 'com.yourname.modid' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'modid'
+group = 'com.yourname.playtime_commands' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'playtime_commands'
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -126,7 +128,7 @@ minecraft {
             args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                examplemod {
+                playtime_commands {
                     source sourceSets.main
                 }
             }
@@ -153,6 +155,7 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.73'
 
+    minecraftLibrary "${project.library_maven_name}:${project.library_version}"
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
@@ -203,3 +206,17 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+
+shadowJar {
+    dependencies {
+        include(dependency("${project.library_maven_name}:.*"))
+    }
+    exclude('net')
+}
+
+reobf{
+    shadowJar {}
+}
+
+jar.finalizedBy('shadowJar')
