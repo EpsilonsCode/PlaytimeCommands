@@ -82,7 +82,7 @@ public class PlaytimeCommands
             }
 
             
-            serverPlayer.sendSystemMessage(Component.literal("You've been playing for: " + playtimeInSeconds / 3600 + " hours!"));
+            serverPlayer.sendSystemMessage(Component.literal("You've been playing for: " + String.format("%.02f", playtimeInSeconds / 3600) + " hours!"));
             ArrayList<String> milestones = new ArrayList<>();
             JsonObject json = new JsonObject();
             JsonArray jsonArray = new JsonArray();
