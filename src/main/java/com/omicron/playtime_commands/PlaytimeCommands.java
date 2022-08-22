@@ -1,20 +1,23 @@
 package com.omicron.playtime_commands;
 
 import com.google.gson.*;
-import com.mojang.logging.LogUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+
+import net.minecraft.entity.player.ServerPlayerEntity;
+
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.util.text.StringTextComponent;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
+
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.server.ServerLifecycleHooks;
-import org.slf4j.Logger;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
+
 
 import java.io.*;
 import java.sql.*;
@@ -36,13 +39,13 @@ public class PlaytimeCommands
     // Define mod id in a common place for everything to reference
     public static final String MODID = "playtime_commands";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    //private static final Logger LOGGER = LogManager.getLogger();
 
     public PlaytimeCommands()
     {
 
 
-
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onServerStarting);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -50,8 +53,9 @@ public class PlaytimeCommands
     @SubscribeEvent
     public void onEntityJoin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        if(event.getEntity() instanceof ServerPlayer serverPlayer)
+        if(event.getEntity() instanceof ServerPlayerEntity)
         {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) event.getEntity();
             float playtimeInSeconds = 0;
             //System.out.println(event.getEntity());
 
@@ -82,7 +86,7 @@ public class PlaytimeCommands
                 throwables.printStackTrace();
             }
 
-            serverPlayer.sendMessage(new TextComponent("You've been playing for: " + String.format("%.02f", playtimeInSeconds / 3600) + " hours!"), serverPlayer.getUUID());
+            serverPlayer.sendMessage(new StringTextComponent("You've been playing for: " + String.format("%.02f", playtimeInSeconds / 3600) + " hours!"), serverPlayer.getUUID());
             ArrayList<String> milestones = new ArrayList<>();
             JsonObject json = new JsonObject();
             JsonArray jsonArray = new JsonArray();
@@ -131,8 +135,9 @@ public class PlaytimeCommands
                         } catch (IOException e) {
                             System.out.println(e);
                         }
-                        if(ServerLifecycleHooks.getCurrentServer() instanceof DedicatedServer dedicatedServer)
+                        if(ServerLifecycleHooks.getCurrentServer() instanceof DedicatedServer)
                         {
+                            DedicatedServer dedicatedServer = (DedicatedServer) ServerLifecycleHooks.getCurrentServer();
                             for(String command : entry.getValue().commands)
                             {
                                 command = command.replace("{username}", serverPlayer.getName().getString());
@@ -152,11 +157,10 @@ public class PlaytimeCommands
 
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
+    public void onServerStarting(FMLDedicatedServerSetupEvent event)
     {
         // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
+        System.out.println("HELLO from server starting");
         if(!new File(SAVED_PATH).exists())
             try {
                 JsonObject jsonObject = new JsonObject();
