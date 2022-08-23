@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = PlaytimeCommands.MODID, name = PlaytimeCommands.NAME, version = PlaytimeCommands.VERSION)
+@Mod(modid = PlaytimeCommands.MODID, name = PlaytimeCommands.NAME, version = PlaytimeCommands.VERSION, serverSideOnly = true, acceptableRemoteVersions = "*")
 public class PlaytimeCommands
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
