@@ -80,6 +80,7 @@ public class PlaytimeCommands implements ModInitializer {
 
 	public static void onPlayerConnect(ClientConnection connection, ServerPlayerEntity serverPlayer)
 	{
+		LOGGER.info("HELLO from player logging in");
 		float playtimeInSeconds = 0;
 		//System.out.println(event.getEntity());
 
