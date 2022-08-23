@@ -6,35 +6,22 @@ package com.omicron.playtime_commands;
 //
 
 
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import org.apache.commons.lang3.StringUtils;
+
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import javax.annotation.Nullable;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.Contract;
 
 public class GsonHelper {
     private static final Gson GSON = (new GsonBuilder()).create();
@@ -103,7 +90,6 @@ public class GsonHelper {
     }
 
     @Nullable
-    @Contract("_,_,!null->!null;_,_,null->_")
     public static String getAsString(JsonObject p_13852_, String p_13853_, @Nullable String p_13854_) {
         return p_13852_.has(p_13853_) ? convertToString(p_13852_.get(p_13853_), p_13853_) : p_13854_;
     }
@@ -329,7 +315,6 @@ public class GsonHelper {
     }
 
     @Nullable
-    @Contract("_,_,!null->!null;_,_,null->_")
     public static JsonObject getAsJsonObject(JsonObject p_13842_, String p_13843_, @Nullable JsonObject p_13844_) {
         return p_13842_.has(p_13843_) ? convertToJsonObject(p_13842_.get(p_13843_), p_13843_) : p_13844_;
     }
@@ -351,7 +336,6 @@ public class GsonHelper {
     }
 
     @Nullable
-    @Contract("_,_,!null->!null;_,_,null->_")
     public static JsonArray getAsJsonArray(JsonObject p_13833_, String p_13834_, @Nullable JsonArray p_13835_) {
         return p_13833_.has(p_13834_) ? convertToJsonArray(p_13833_.get(p_13834_), p_13834_) : p_13835_;
     }
@@ -373,7 +357,6 @@ public class GsonHelper {
     }
 
     @Nullable
-    @Contract("_,_,!null,_,_->!null;_,_,null,_,_->_")
     public static <T> T getAsObject(JsonObject p_13846_, String p_13847_, @Nullable T p_13848_, JsonDeserializationContext p_13849_, Class<? extends T> p_13850_) {
         return p_13846_.has(p_13847_) ? convertToObject(p_13846_.get(p_13847_), p_13847_, p_13849_, p_13850_) : p_13848_;
     }
