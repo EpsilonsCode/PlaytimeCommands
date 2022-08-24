@@ -9,6 +9,7 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +113,7 @@ public class PlaytimeCommands implements ModInitializer {
 		}
 
 
-		serverPlayer.sendMessage(Text.literal("You've been playing for: " + String.format("%.02f", playtimeInSeconds / 3600) + " hours!"));
+		serverPlayer.sendSystemMessage(new LiteralText("You've been playing for: " + String.format("%.02f", playtimeInSeconds / 3600) + " hours!"), serverPlayer.getUuid());
 		ArrayList<String> milestones = new ArrayList<>();
 		JsonObject json = new JsonObject();
 		JsonArray jsonArray = new JsonArray();
