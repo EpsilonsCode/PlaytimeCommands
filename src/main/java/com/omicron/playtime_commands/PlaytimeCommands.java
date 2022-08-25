@@ -27,6 +27,12 @@ public class PlaytimeCommands implements ModInitializer {
 
 	private static final String SAVED_PATH = FabricLoader.getInstance().getConfigDir().toString() + "/playtime_commands_saved.json";
 
+	private static String USER = "";
+
+	private static String PASSWORD = "";
+
+	private static String ADDRESS = "";
+
 	private static HashMap<String, Milestone> milestoneMap = new HashMap<>();
 	// Define mod id in a common place for everything to reference
 	public static final String MODID = "playtime_commands";
@@ -61,14 +67,22 @@ public class PlaytimeCommands implements ModInitializer {
 				if(new File(CONFIG_PATH).exists())
 					try {
 						JsonObject json = GSON.fromJson(new FileReader(CONFIG_PATH), JsonObject.class);
-						for(Map.Entry<String, JsonElement> entry : json.entrySet())
-						{
-							ArrayList<String> commands = new ArrayList<>();
-							GsonHelper.getAsJsonArray(entry.getValue().getAsJsonObject(), "commands").forEach((jsonElement -> {
-								commands.add(jsonElement.toString());
-							}));
+						for(Map.Entry<String, JsonElement> entry : json.entrySet()) {
+							if(!entry.getKey().equals("database"))
+							{
+								ArrayList<String> commands = new ArrayList<>();
+								GsonHelper.getAsJsonArray(entry.getValue().getAsJsonObject(), "commands").forEach((jsonElement -> {
+									commands.add(jsonElement.toString());
+								}));
 
-							milestoneMap.put(entry.getKey(), new Milestone(GsonHelper.getAsInt(entry.getValue().getAsJsonObject(), "playtime"), commands.toArray(new String[0])));
+								milestoneMap.put(entry.getKey(), new Milestone(GsonHelper.getAsInt(entry.getValue().getAsJsonObject(), "playtime"), commands.toArray(new String[0])));
+							}
+							else
+							{
+								USER = GsonHelper.getAsString(entry.getValue().getAsJsonObject(), "user");
+								PASSWORD = GsonHelper.getAsString(entry.getValue().getAsJsonObject(), "password");
+								ADDRESS = GsonHelper.getAsString(entry.getValue().getAsJsonObject(), "address");
+							}
 						}
 
 					} catch (FileNotFoundException e) {
@@ -90,7 +104,7 @@ public class PlaytimeCommands implements ModInitializer {
 			System.out.println(e);
 		}
 		//create connection for a server installed in localhost, with a user "root" with no password
-		try (Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost/player_data", "root", null)) {
+		try (Connection conn = DriverManager.getConnection("jdbc:mariadb://" + ADDRESS, USER, PASSWORD)) {
 			// create a Statement
 			//System.out.println("sql2");
 			Statement stmt = conn.createStatement();
